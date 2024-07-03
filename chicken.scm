@@ -12,7 +12,7 @@
 
 ;; Function to decompress a gzipped file and return the contents as a string
 (define (read-json-gzip file-path)
-         (json-read (z3:open-compressed-input-file file-path)))
+  (json-read (z3:open-compressed-input-file file-path)))
 
 ;; Function to check if a file has a .json.gz extension
 (define (json-gz-file? file-name)

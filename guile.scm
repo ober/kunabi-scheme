@@ -21,10 +21,11 @@
 (define (read-json-gzip file-path)
   (call-with-input-file file-path
     (lambda (in)
-      (call-with-gzip-input-port in
-                                 (lambda (gzip-port)
-                                   (let ((decompressed (get-bytevector-all gzip-port)))
-                                     (json-string->scm (utf8->string decompressed))))))
+      (call-with-gzip-input-port
+       in
+       (lambda (gzip-port)
+         (let ((decompressed (get-bytevector-all gzip-port)))
+           (json-string->scm (utf8->string decompressed))))))
     #:binary #t))
 
 ;; Regular expression to match files with .json.gz extension
