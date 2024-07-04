@@ -3,15 +3,15 @@
 (use gauche.uvector)  ; For bytevector operations
 (use binary.io)       ; General I/O operations
 (use srfi-19)         ; Time and date library, only if needed
-(use rfc.json)        ; JSON parsing
+(use srfi-180)        ; JSON parsing
 (use file.util)       ; File utilities for directory walking
 
 (define (read-json-gzip file-path)
   (call-with-input-file file-path
     (lambda (in)
-      (let* ((gzip-port (zlib-inflate-port in))
+      (let* ((gzip-port (open-inflating-port in :window-bits 47))
              (json-string (port->string gzip-port)))
-        (json-string->object json-string)))))
+        (json-read json-string)))))
 
 ;; Function to check if a file has a .json.gz extension
 (define (json-gz-file? file-name)
