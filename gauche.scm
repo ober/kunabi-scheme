@@ -1,6 +1,5 @@
 #!/home/linuxbrew/.linuxbrew/bin/gosh
-
-(use rpc.zlib)        ; For gzip compression/decompression
+(use rfc.zlib)        ; For gzip compression/decompression
 (use gauche.uvector)  ; For bytevector operations
 (use binary.io)       ; General I/O operations
 (use srfi-19)         ; Time and date library, only if needed
