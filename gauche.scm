@@ -1,10 +1,11 @@
 #!/home/linuxbrew/.linuxbrew/bin/gosh
-(use rfc.zlib)        ; For gzip compression/decompression
-(use gauche.uvector)  ; For bytevector operations
-(use binary.io)       ; General I/O operations
-(use srfi-19)         ; Time and date library, only if needed
-(use rfc.json)        ; JSON parsing
-(use file.util)       ; File utilities for directory walking
+(use rfc.zlib)
+(use gauche.uvector)
+(use binary.io)
+(use srfi-19)
+(use rfc.json)
+(use file.util)
+;;(use scheme.hash-table)
 
 (define (read-json-gzip file-path)
   (call-with-input-file file-path
@@ -39,20 +40,18 @@
   (let ((files (walk-directory dir)))
     (for-each
      (lambda (file)
-       (let ((json (read-json-gzip file)))
-         (displayln (type-of json))))
-         ;; (for-each
-         ;;  (lambda (record)
-         ;;    (let ((request-id (gethash "requestID" record))
-         ;;          (event-name (gethash "eventName" record))
-         ;;          (user-identity (gethash "userIdentity" record)))
-         ;;      (print (format "~a: ~a ~a\n" request-id event-name user-identity))))
-         ;;  (cdr (assoc "Records" json)))))
+       (let ((a (read-json-gzip file)))
+         (for-each
+          (lambda (record)
+            (let ((request (assoc-ref record "requestID"))
+                  (event-name (assoc-ref record "eventName")))
+              (displayln (format "~a ~a" request event-name))))
+          (vector->list (assoc-ref (car a) "Records")))))
      files)))
-
 
 (define (type-of x)
   (cond
+   ((hash-table? x) 'hash-table)
    ((procedure? x) 'procedure)
    ((number? x) 'number)
    ((string? x) 'string)
