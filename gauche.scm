@@ -11,7 +11,7 @@
     (lambda (in)
       (let* ((gzip-port (open-inflating-port in :window-bits 47))
              (json-string (port->string gzip-port)))
-        (parse-json json-string)))))
+        (time (parse-json* json-string))))))
 
 ;; Function to check if a file has a .json.gz extension
 (define (json-gz-file? file-name)
