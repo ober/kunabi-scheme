@@ -87,4 +87,4 @@
   (display x)
   (newline))
 
-(ct "/home/user/bench2")
+(ct "/home/user/bench")

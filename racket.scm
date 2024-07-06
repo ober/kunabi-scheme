@@ -65,4 +65,4 @@
       ((null? x) 'null)
       (else 'unknown)))
 
-  (ct "/home/user/bench2")
+  (ct "/home/user/bench")
