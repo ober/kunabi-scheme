@@ -35,7 +35,6 @@
      entries)
     results))
 
-;; Example usage
 (define (ct dir)
   (let ((files (walk-directory dir)))
     (for-each
@@ -69,4 +68,4 @@
   (display x)
   (newline))
 
-(ct "/home/user/bench2")
+(ct "/home/user/bench")

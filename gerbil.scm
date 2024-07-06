@@ -22,11 +22,14 @@
 (export #t)
 
 (def (main)
-  (let ((files (find-ct-files "/home/user/bench2")))
+  (let ((files (find-ct-files "/home/user/bench")))
     (for-each
       (lambda (file)
         (let (json (read-ct-file file))
-          (displayln json)))
+          (if (hash-table? json)
+            (let-hash json
+              (displayln .requestID
+                         .eventName)))))
       files)))
 
 (def (find-ct-files dir)
