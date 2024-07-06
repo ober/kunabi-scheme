@@ -49,7 +49,8 @@
           (for-each
 	        (lambda (row)
               (set! count (+ count 1))
-              (displayln row))
+              ;;(displayln row))
+              )
 	        mytables))))
 
     (let ((delta (- (time->seconds (current-time)) btime)))
