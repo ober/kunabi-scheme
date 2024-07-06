@@ -1,19 +1,18 @@
-;; Import necessary libraries
 (import (sagittarius)
-        (sagittarius regex)      ; For regular expression matching
-        (text json)       ; For JSON parsing
+        (sagittarius regex)
+        (scheme file)
+        (text json)
         (rnrs)
-        (rnrs bytevectors)       ; For binary data handling
-        (binary data)     ; For gzip decompression
-        (rfc zlib))      ; Gzip functionality
+        (rnrs bytevectors)
+        (binary data)
+        (rfc zlib))
 
 ;; Function to decompress a gzipped JSON file and parse it
 (define (read-json-gzip file-path)
-  (call-with-input-file file-path
-    (lambda (bin-port)
-      (let* ((gzip-port (open-inflating-input-port bin-port))
-             (json-text (read-all gzip-port)))
-        (json-string->object json-text)))))
+  (let* ((bin-port (open-binary-input-file file-path))
+         (gzip-port (open-inflating-input-port bin-port))
+         (json-text (get-string-all (utf8->string (get-bytevector-all gzip-port)))))
+    (json-read json-text)))
 
 ;; Function to check if a file has a .json.gz extension
 (define (json-gz-file? file-name)
