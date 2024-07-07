@@ -20,9 +20,10 @@
 
 (define (read-json-gzip file-path)
   (call-with-input-file file-path
-    (let* ((bytevector (string-append "gzip -d -c " file-path))
-           (json-data (json-read bytevector)))
-        json-data)))
+    (lambda (in)
+      (let* ((bytevector (process-run-bytevector (string-append "gzip -d -c " file-path) in))
+             (json-data (json-read bytevector)))
+        json-data))))
 
 (define json-gz-regexp '(: (* any) ".json.gz"))
 
@@ -40,14 +41,13 @@
                 (not (member entry '("." ".."))))
            (if (file-directory? full-path)
              (set! results (append results (walk-directory full-path)))
-             (if ((json-gz-file? entry))
+             (if (json-gz-file? entry)
                (set! results (cons full-path results))))))))
      entries)
     results))
 
 (define (ct dir)
   (let ((files (walk-directory dir)))
-    (displayln (type-of files))
     (for-each
      (lambda (file)
        (displayln file)
@@ -80,5 +80,12 @@
 (define (displayln x)
   (display x)
   (newline))
+
+(define (process-run-bytevector cmd bvec)
+  (call-with-temp-file "bvec"
+    (lambda (path out preserve)
+      (write-bytevector bvec out)
+      (close-output-port out)
+      (process->bytevector (append cmd (list path))))))
 
 (ct "/home/user/bench")
