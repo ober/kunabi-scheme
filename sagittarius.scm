@@ -49,4 +49,8 @@
          (newline)))
      files)))
 
+(def (displayln item)
+  (display item)
+  (newline))
+
 (ct "/home/user/bench2")
