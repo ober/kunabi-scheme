@@ -1,12 +1,15 @@
 (import (scheme base)
         (scheme file)
         (scheme process-context)
-        (chibi gzip)
+;;        (chibi gzip)
         (chibi json)
+        (chibi filesystem)
+        (srfi 115)
         (chibi string)
         (srfi 1)
         (srfi 11)
-        (srfi 19)
+        (scheme write)
+        (scheme red)
         (srfi 64)
         (srfi 26)
         (srfi 1))
@@ -14,18 +17,17 @@
 (define (read-json-gzip file-path)
   (call-with-input-file file-path
     (lambda (in)
-      (call-with-gzip-input-port
-       in
-       (lambda (gzip-port)
-         (let ((decompressed (get-bytevector-all gzip-port)))
-           (json-string->scm (utf8->string decompressed))))))))
+      (let ((gzip-port (open-input-pipe (string-append "gzip -d -c " file-path))))
+        (let ((json-data (json-read gzip-port)))
+          (close-input-port gzip-port)
+          json-data)))))
 
 ;; Regular expression to match files with .json.gz extension
 (define json-gz-regexp ".*\\.json\\.gz$")
 
 ;; Function to check if a file has a .json.gz extension
 (define (json-gz-file? file-name)
-  (regexp-exec (regexp json-gz-regexp) file-name))
+  (regexp-match? (regexp-matches json-gz-regexp file-name)))
 
 ;; Function to walk a directory tree and return list of files matching json.gz
 (define (walk-directory dir)
@@ -53,11 +55,11 @@
          (for-each
           (lambda (record)
             (let* ((h (alist->hash-table record))
-                   (request-id (hash-ref h "requestID"))
-                   (event-name (hash-ref h "eventName"))
-                   (user-identity (hash-ref h "userIdentity")))
+                   (request-id (hash-table-ref h "requestID"))
+                   (event-name (hash-table-ref h "eventName"))
+                   (user-identity (hash-table-ref h "userIdentity")))
               (displayln (format #f "~a: ~a ~a" request-id event-name user-identity))))
-          (vector->list (assoc-ref json "Records")))))
+          (vector->list (assoc json "Records")))))
      files)))
 
 (define (type-of x)
