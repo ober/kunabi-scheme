@@ -17,8 +17,8 @@
 (define (read-json-gzip file-path)
   (call-with-input-file file-path
     (lambda (in)
-      (let ((gzip-port (open-input-pipe (string-append "gzip -d -c " file-path))))
-        (let ((json-data (json-read gzip-port)))
+      (let ((bytevector (process-run-bytevector (string-append "gzip -d -c " file-path))))
+        (let ((json-data (json-read bytevector)))
           (close-input-port gzip-port)
           json-data)))))
 
